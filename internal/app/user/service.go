@@ -6,6 +6,8 @@ import (
 	"library-sevice/internal/factory"
 	"library-sevice/internal/models"
 	"library-sevice/internal/repository"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -35,12 +37,14 @@ func (s *service) Create(ctx context.Context, payload dto.CreateUserRequest) (st
 	data["email"] = payload.Email
 	//}
 	//if payload.Password != nil {
-	data["password"] = payload.Password
+	// data["password"] = payload.Password
 	//}
-	_, e := s.UserRepository.FindByEmail(ctx, payload.Email)
+	_, e := s.UserRepository.FindByEmail(ctx, &payload.Email)
 	if e == nil {
 		return "Email already exists!", e
 	}
+	byteFile, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	data["password"] = string(byteFile)
 	err := s.UserRepository.Create(ctx, data)
 	if err != nil {
 		return "Create User Failed", err
