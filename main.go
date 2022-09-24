@@ -2,14 +2,16 @@ package main
 
 import (
 	"flag"
-	"github.com/joho/godotenv"
 	"library-sevice/database/migration"
 	"library-sevice/internal/factory"
 	"library-sevice/internal/http"
 	"os"
 
-	"github.com/labstack/echo/v4"
+	"github.com/joho/godotenv"
+
 	"library-sevice/database"
+
+	"github.com/labstack/echo/v4"
 )
 
 func init() {
@@ -20,6 +22,7 @@ func init() {
 func main() {
 
 	database.CreateConnection()
+	migration.Migrate()
 
 	var m string // for check migration
 
